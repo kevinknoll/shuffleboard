@@ -19,7 +19,7 @@
         c = 'blue';
         break;
       default:
-        c = 'yellow';
+        c = color;
         break;
     }
 
@@ -43,18 +43,22 @@
       return (r < 60 && g < 60 && b > 50);
     });
 
-    tracker = new t.ColorTracker(['one', 'two']);
+    tracker = new t.ColorTracker(['one', 'two', 'magenta']);
 
     tracker.on('track', function(event) {
       event.data.forEach(function(rect) {
         var color = rect.color;
 
-        // false positives
-        if (rect.width > 100 || rect.height > 100 || Math.abs(rect.width - rect.height) > 15) {
-          color = 'unknown';
-        }
+        if (color === 'magenta') {
+          plot(0, rect.y, img.width, rect.height, color);
+        } else {
+          // false positives
+          if (rect.width > 100 || rect.height > 100 || Math.abs(rect.width - rect.height) > 15) {
+            color = 'yellow';
+          }
 
-        plot(rect.x, rect.y, rect.width, rect.height, color);
+          plot(rect.x, rect.y, rect.width, rect.height, color);
+        }
       });
     });
 
