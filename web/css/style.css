@@ -1,0 +1,7 @@
+#frame {
+  position: relative;
+}
+#frame div {
+  border: 2px solid;
+  position: absolute;
+}
