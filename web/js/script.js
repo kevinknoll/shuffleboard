@@ -1,37 +1,12 @@
 (function(w, d, t) {
-  var img = d.getElementById('img');
+  var video = document.getElementById('video');
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
   var frame = d.getElementById('frame');
   var tracker;
 
   if (typeof t === 'undefined') {
     return;
-  }
-
-  function plot(x, y, w, h, color) {
-    var rect = d.createElement('div');
-    var c = '';
-
-    switch (color) {
-      case 'one':
-        c = 'red';
-        break;
-      case 'two':
-        c = 'blue';
-        break;
-      default:
-        c = color;
-        break;
-    }
-
-    if (c) {
-      rect.style.borderColor = c;
-      rect.style.width = w + 'px';
-      rect.style.height = h + 'px';
-      rect.style.left = (img.offsetLeft + x) + 'px';
-      rect.style.top = (img.offsetTop + y) + 'px';
-
-      frame.appendChild(rect);
-    }
   }
 
   function init() {
@@ -46,27 +21,38 @@
     tracker = new t.ColorTracker(['one', 'two', 'magenta']);
 
     tracker.on('track', function(event) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       event.data.forEach(function(rect) {
         var color = rect.color;
 
         if (color === 'magenta') {
-          plot(0, rect.y, img.width, rect.height, color);
+          ctx.strokeStyle = color;
+          ctx.strokeRect(0, rect.y, canvas.width, rect.height);
         } else {
           // false positives
           if (rect.width > 100 || rect.height > 100 || Math.abs(rect.width - rect.height) > 15) {
             color = 'yellow';
           }
-
-          plot(rect.x, rect.y, rect.width, rect.height, color);
+          ctx.strokeStyle = color;
+          ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
         }
       });
     });
-
-    w.addEventListener('load', function () {
-      t.track(img, tracker);
-    }, false);
   }
 
-  init();
+  function start() {
+    navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: true
+    }).then(function (stream) {
+      video.srcObject = stream;
+      init();
+      t.track(video, tracker);
+    }).catch(function (err) {
+      console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+    });
+  }
+
+  d.getElementById('start').addEventListener('click', start, false);
 
 })(window, document, window.tracking);

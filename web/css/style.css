@@ -1,7 +1,5 @@
-#frame {
-  position: relative;
-}
-#frame div {
-  border: 2px solid;
-  position: absolute;
+.wrap {
+  background: #f2f2f2;
+  display: flex;
+  flex-wrap: wrap;
 }
