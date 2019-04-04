@@ -7,7 +7,15 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <button type="button" id="start">Start</button>
+  <p>
+    <label for="cameras">Select a Camera</label><br>
+    <select id="cameras"></select>
+  </p>
+
+  <p>
+    <button type="button" id="start">Start</button>
+  </p>
+
   <div class="wrap">
     <video autoplay controls width="400" height="300" id="video"></video>
     <canvas width="400" height="300" id="canvas"></canvas>

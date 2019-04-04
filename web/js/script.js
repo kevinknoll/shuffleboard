@@ -1,8 +1,10 @@
 (function(w, d, t) {
-  var video = document.getElementById('video');
-  var canvas = document.getElementById('canvas');
+  var video = d.getElementById('video');
+  var canvas = d.getElementById('canvas');
+  var cameras = d.getElementById('cameras');
   var ctx = canvas.getContext('2d');
   var frame = d.getElementById('frame');
+  var deviceId;
   var tracker;
 
   if (typeof t === 'undefined') {
@@ -40,23 +42,66 @@
     });
   }
 
-  function start() {
-    navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        facingMode: {
-          exact: 'environment'
+  function getCameras() {
+    navigator.mediaDevices.enumerateDevices().then(function (devices) {
+      while (cameras.firstChild) {
+        cameras.removeChild(cameras.firstChild);
+      }
+      var option;
+      for (var i = 0, ii = devices.length; i < ii; ++i) {
+        if (devices[i].kind === 'videoinput') {
+          option = d.createElement('option');
+          option.value = devices[i].deviceId;
+          option.text = devices[i].label || 'Video #' + (i + 1);
+          cameras.appendChild(option);
         }
       }
-    }).then(function (stream) {
+    });
+  }
+
+  function stop() {
+    var tracks;
+
+    if (video.srcObject) {
+      tracks = video.srcObject.getTracks();
+      for (var i = 0, ii = tracks.length; i < ii; ++i) {
+        tracks[i].stop();
+      }
+    }
+  }
+
+  function start() {
+    var constraints = {
+      audio: false,
+      video: true
+    };
+
+    if (deviceId) {
+      constraints.video = {
+        deviceId: {
+          exact: deviceId
+        }
+      };
+    }
+
+    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
       video.srcObject = stream;
       init();
       t.track(video, tracker);
     }).catch(function (err) {
-      console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+      console.log('navigator.MediaDevices.getUserMedia error: ', err.message, err.name);
     });
   }
 
-  d.getElementById('start').addEventListener('click', start, false);
+  d.getElementById('start').addEventListener('click', function () {
+    stop();
+    start();
+    getCameras();
+  }, false);
+
+  cameras.addEventListener('change', function () {
+    deviceId = this.value;
+    start();
+  });
 
 })(window, document, window.tracking);
