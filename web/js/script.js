@@ -6,12 +6,14 @@
   var frame = d.getElementById('frame');
   var deviceId;
   var tracker;
+  var task;
 
   if (typeof t === 'undefined') {
     return;
   }
 
   function init() {
+
     t.ColorTracker.registerColor('one', function(r, g, b) {
       return (r > 50 && g < 60 && b < 60);
     });
@@ -68,6 +70,10 @@
         tracks[i].stop();
       }
     }
+
+    if (task) {
+      task.stop();
+    }
   }
 
   function start() {
@@ -87,7 +93,7 @@
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
       video.srcObject = stream;
       init();
-      t.track(video, tracker);
+      task = t.track(video, tracker);
     }).catch(function (err) {
       console.log('navigator.MediaDevices.getUserMedia error: ', err.message, err.name);
     });
@@ -97,6 +103,10 @@
     stop();
     start();
     getCameras();
+  }, false);
+
+  d.getElementById('stop').addEventListener('click', function () {
+    stop();
   }, false);
 
   cameras.addEventListener('change', function () {
