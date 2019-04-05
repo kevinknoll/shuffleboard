@@ -7,15 +7,29 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <p>
-    <label for="cameras">Select a Camera</label><br>
-    <select id="cameras"></select>
-  </p>
+  <div class="controls">
+    <div class="control">
+      <label for="cameras">Select a Camera</label><br>
+      <select id="cameras"></select>
+    </div>
+  </div>
 
-  <p>
-    <button type="button" id="start">Start</button>
-    <button type="button" id="stop">Stop</button>
-  </p>
+  <div class="controls">
+    <div class="control">
+      <button type="button" id="start">Start</button>
+    </div>
+    <div class="control">
+      <button type="button" id="stop">Stop</button>
+    </div>
+    <div class="control">
+      <button type="button" id="set-one">Set Color One</button>
+      <div id="color0"></div>
+    </div>
+    <div class="control">
+      <button type="button" id="set-two">Set Color Two </button>
+      <div id="color1"></div>
+    </div>
+  </div>
 
   <div class="wrap">
     <video autoplay controls playsinline muted width="400" height="300" id="video"></video>
