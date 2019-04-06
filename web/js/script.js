@@ -30,7 +30,7 @@
   function getAverageColor(nth) {
     var width = canvas.width;
     var height = canvas.height;
-    var pixels = ctx.getImageData(width * .3, height * .3, width * .6, height * .6);
+    var pixels = ctx.getImageData(5, 5, 25, 25);
     var rgb = { r: 0, g: 0, b: 0 };
     var count = 0;
     var i = 0;
