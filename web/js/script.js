@@ -26,6 +26,15 @@
     debugColor(idx);
   }
 
+  function getColorDifference(c1, c2) {
+    // https://en.wikipedia.org/wiki/Euclidean_distance#Three_dimensions
+    return Math.sqrt(
+      Math.pow(c1.r - c2.r, 2) +
+      Math.pow(c1.g - c2.g, 2) +
+      Math.pow(c1.b - c2.b, 2)
+    );
+  }
+
   // get average color based on every nth pixel
   function getAverageColor(nth) {
     var width = canvas.width;
@@ -50,20 +59,20 @@
   }
 
   function init() {
-    var tolerance = 20;
+    var tolerance = 40;
 
     t.ColorTracker.registerColor('one', function(r, g, b) {
-      var c = colors[0];
-      return r > c.r - tolerance && r < c.r + tolerance &&
-             g > c.g - tolerance && g < c.g + tolerance &&
-             b > c.b - tolerance && b < c.b + tolerance;
+      var t = { r:r, g:g, b:b };
+      var diff = getColorDifference(colors[0], t);
+
+      return diff < tolerance;
     });
 
     t.ColorTracker.registerColor('two', function(r, g, b) {
-      var c = colors[1];
-      return r > c.r - tolerance && r < c.r + tolerance &&
-             g > c.g - tolerance && g < c.g + tolerance &&
-             b > c.b - tolerance && b < c.b + tolerance;
+      var t = { r:r, g:g, b:b };
+      var diff = getColorDifference(colors[1], t);
+
+      return diff < tolerance;
     });
 
     tracker = new t.ColorTracker(['one', 'two', 'magenta']);
