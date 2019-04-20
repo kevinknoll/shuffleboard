@@ -146,10 +146,35 @@
       };
     }
 
+    function findCorners() {
+      var blurRadius = 2;
+      var rectSize = 2;
+      var width = canvas.width;
+      var height = canvas.height;
+      var imageData = ctx.getImageData(0, 0, width, height);
+      var blur = tracking.Image.blur(imageData.data, width, height, blurRadius);
+      var gray = tracking.Image.grayscale(blur, width, height);
+      var sobel = tracking.Image.sobel(gray, width, height);
+      var corners = tracking.Fast.findCorners(sobel, width, height);
+
+      ctx.fillStyle = 'cyan';
+      for (var i = 0; i < corners.length; i += 2) {
+        ctx.fillRect(corners[i], corners[i + 1], rectSize, rectSize);
+      }
+    };
+    findCorners();
+
+    function redraw() {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      findCorners();
+      requestAnimationFrame(redraw);
+    }
+
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
       video.srcObject = stream;
       init();
-      task = t.track(video, tracker);
+      redraw();
+      //task = t.track(video, tracker);
     }).catch(function (err) {
       console.log('navigator.MediaDevices.getUserMedia error: ', err.message, err.name);
     });
